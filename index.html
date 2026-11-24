@@ -21,7 +21,7 @@ img{max-width:100%}
   --bg:#EEF1F6; --surface:#FFFFFF; --sunk:#F5F7FB; --ink:#141C2B; --muted:#5A6577; --line:#DAE0EA;
   --accent:#2343C4; --accent-ink:#FFFFFF; --accent-soft:#E3E8FB;
   --good:#1B7448; --good-soft:#DFF2E7; --warn:#9A5A00; --warn-soft:#FBEFD9; --bad:#B3261E; --bad-soft:#FBE3E1;
-  --c-wife:#7A52CC; --c-bills:#2343C4; --c-save:#0E8A8A; --c-car:#C2621B; --c-left:#1B7448;
+  --c-wife:#C2337A; --c-bills:#2F5BEA; --c-save:#0FA3B1; --c-car:#F08C00; --c-left:#2E9E4F;
   --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body:"IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --f-num:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -31,12 +31,12 @@ img{max-width:100%}
   --bg:#0E131B; --surface:#171F2B; --sunk:#121924; --ink:#E7ECF3; --muted:#97A2B4; --line:#2A3445;
   --accent:#8EA5FF; --accent-ink:#0E131B; --accent-soft:#1E2A4C;
   --good:#5CC28C; --good-soft:#163527; --warn:#E8AA45; --warn-soft:#3A2B12; --bad:#F08A80; --bad-soft:#3E1C1A;
-  --c-wife:#A88BF0; --c-bills:#8EA5FF; --c-save:#45C7C2; --c-car:#EE9A55; --c-left:#5CC28C; color-scheme:dark;}}
+  --c-wife:#F06AAE; --c-bills:#7C9BFF; --c-save:#3CD3E0; --c-car:#FFAE42; --c-left:#5CCB7E; color-scheme:dark;}}
 :root[data-theme="dark"]{
   --bg:#0E131B; --surface:#171F2B; --sunk:#121924; --ink:#E7ECF3; --muted:#97A2B4; --line:#2A3445;
   --accent:#8EA5FF; --accent-ink:#0E131B; --accent-soft:#1E2A4C;
   --good:#5CC28C; --good-soft:#163527; --warn:#E8AA45; --warn-soft:#3A2B12; --bad:#F08A80; --bad-soft:#3E1C1A;
-  --c-wife:#A88BF0; --c-bills:#8EA5FF; --c-save:#45C7C2; --c-car:#EE9A55; --c-left:#5CC28C; color-scheme:dark;}
+  --c-wife:#F06AAE; --c-bills:#7C9BFF; --c-save:#3CD3E0; --c-car:#FFAE42; --c-left:#5CCB7E; color-scheme:dark;}
 
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
@@ -71,6 +71,11 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .payline{font-size:.85rem;color:var(--muted);margin-top:2px}
 .payline b{color:var(--ink);font-weight:600}
 .mover{display:flex;flex-direction:column;gap:4px}.mover .iconbtn{width:34px;height:28px;font-size:.9rem}.iconbtn:disabled{opacity:.3;cursor:default}
+.gear{display:grid;place-items:center;color:var(--ink);flex:none}
+.gear[aria-current="page"]{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.seg{display:inline-flex;align-self:flex-start;border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px;background:var(--sunk)}
+.seg button{border:0;background:transparent;border-radius:8px;padding:7px 16px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.15)}
 .iconbtn{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--surface);font-size:1.1rem}
 
 /* example banner */
@@ -84,7 +89,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .moneyin input{border:0;background:transparent;color:var(--ink);font-family:var(--f-num);font-size:1rem;width:6.5em;padding:8px 4px;min-width:0}
 .moneyin.big input{font-size:1.6rem;width:6em}
 .moneyin.big span{font-size:1.3rem}
-.bar{display:flex;height:14px;border-radius:7px;overflow:hidden;background:var(--sunk);border:1px solid var(--line)}
+.bar{display:flex;gap:2px;height:16px;border-radius:8px;overflow:hidden;background:var(--sunk);border:1px solid var(--line)}
 .bar>div{height:100%}
 .leg{display:grid;grid-template-columns:auto 1fr auto auto;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
 .leg:first-child{border-top:0}
@@ -109,8 +114,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .up{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:.92rem}
 .up:first-child{border-top:0}
 .up .when{font-family:var(--f-num);font-size:.78rem;color:var(--muted)}
-.balbox{background:var(--accent-soft);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.balbox{background:var(--sunk);border:1px solid var(--line);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:12px}
 .balbox>div:first-child b{display:block}
+.balbox>.btn{align-self:flex-start}
 .balbox .kpi{background:var(--surface)}
 .balgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
 
@@ -187,7 +193,8 @@ td.r,th.r{text-align:right}
 <div class="wrap">
   <div class="top">
     <div class="brand"><i aria-hidden="true"></i>Payday Planner</div>
-    <div class="status" id="status">Loading your figures…</div>
+    <div class="row" style="gap:10px;flex-wrap:nowrap;min-width:0"><div class="status" id="status">Loading your figures…</div>
+    <button class="iconbtn gear" id="settingsBtn" data-act="goto" data-tab="settings" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
   </div>
   <div class="monthbar">
     <div>
@@ -308,7 +315,7 @@ function example(){
 }
 
 let S=null, curK=currentPayK(), tab='month';
-try{const t=localStorage.getItem('pp-tab');if(t)tab=t}catch(e){}
+try{const t=localStorage.getItem('pp-tab');if(t&&t!=='settings')tab=t}catch(e){}
 
 /* ---------- model ---------- */
 function monthRec(k){
@@ -513,6 +520,15 @@ function signOut(){
 }
 
 /* ---------- render ---------- */
+function getTheme(){try{return localStorage.getItem('pp-theme')||'auto'}catch(e){return 'auto'}}
+function applyTheme(v){
+  const root=document.documentElement;
+  if(v==='light'||v==='dark') root.setAttribute('data-theme',v); else root.removeAttribute('data-theme');
+  const dark=v==='dark'||(v!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);
+  const m=document.querySelector('meta[name="theme-color"]'); if(m) m.content=dark?'#0E131B':'#EEF1F6';
+}
+applyTheme(getTheme());
+try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>applyTheme(getTheme()))}catch(e){}
 function render(){
   const P=payday(curK), N=payday(addM(curK,1)), isNow=curK===currentPayK();
   $('#monthTitle').textContent=payName(curK)+' '+P.getFullYear();
@@ -523,7 +539,8 @@ function render(){
   $('#banner').innerHTML=fresh?`<div class="banner"><div><b>Welcome.</b> Moving from the Claude version? Restore the backup file you saved there and all your figures come across.</div><div class="row"><button class="btn primary" data-act="goto-backup">Restore from backup</button></div></div>`:S.example?`<div class="banner"><div><b>Example figures.</b> These are made-up numbers to show how it works. Edit them, or clear them and add your own.</div><div class="row"><button class="btn" data-act="keep-example">Hide note</button><button class="btn primary" data-act="clear-example">Start with my own</button></div></div>`:'';
   renderSplit();
   document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
-  ({month:renderMonth,bills:renderBills,owed:renderOwed,car:renderCar}[tab]||renderMonth)();
+  const g=$('#settingsBtn'); if(g){if(tab==='settings')g.setAttribute('aria-current','page');else g.removeAttribute('aria-current')}
+  ({month:renderMonth,bills:renderBills,owed:renderOwed,car:renderCar,settings:renderSettings}[tab]||renderMonth)();
 }
 function tickBtn(on,act,label,labelOn){return`<button class="tick ${on?'on':''}" data-act="${act}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span>${on?labelOn:label}</button>`}
 function renderSplit(){
@@ -575,7 +592,7 @@ function upcoming(t){
 function owedTotal(){return sum(S.debts,d=>debtLeft(d))}
 function balanceBlock(t){
   const r=t.r, b=r.balance, next=payday(addM(curK,1));
-  if(!b) return `<div class="balbox"><div><b>Check your spending</b><div class="small muted">Enter your main account balance any time to see what’s really left.</div></div><button class="btn primary" data-act="set-balance">Update balance</button></div>`;
+  if(!b) return `<div class="balbox"><div><b>Check your spending</b><div class="small muted">Enter your main account balance any time to see what’s really left.</div></div><button class="btn sm" data-act="set-balance">Update balance</button></div>`;
   const leftNow=r2(b.amount-t.pending), spent=r2(t.left-leftNow);
   const from=new Date(b.date+'T12:00:00'), days=Math.max(1,Math.round((next-new Date(from.getFullYear(),from.getMonth(),from.getDate()))/864e5));
   return `<div class="balbox">
@@ -674,19 +691,25 @@ function renderBills(){
         <span class="meta">${b.times>1?`<span class="chip">${b.times} × ${fmt(b.amount)}</span>`:''}${b.carry?'<span class="chip save">Unspent carries over</span>':''}<span class="small muted">Tap to edit</span></span></button>
       <span class="num amt">${fmt(b.amount*(b.times||1))}</span>
       <span class="mover"><button class="iconbtn" data-act="move-bill" data-id="${b.id}" data-dir="-1" ${ix===0?'disabled':''} aria-label="Move ${esc(b.name)} up">↑</button><button class="iconbtn" data-act="move-bill" data-id="${b.id}" data-dir="1" ${ix===bills.length-1?'disabled':''} aria-label="Move ${esc(b.name)} down">↓</button></span></div>`).join('')}</div>`:`<div class="empty">No bills yet. Add things like your phone, car insurance, lessons and haircuts.</div>`}
-  </section>
-  <section class="card">
+  </section>`;
+}
+function renderSettings(){
+  const th=getTheme();
+  $('#panel').innerHTML=`<section class="card">
     <h2>Settings</h2>
+    <div class="field"><span class="small" style="font-weight:600;color:var(--muted)">Appearance</span>
+      <div class="seg" role="group" aria-label="Appearance">${[['auto','Auto'],['light','Light'],['dark','Dark']].map(([v,l])=>`<button data-act="theme" data-v="${v}" aria-pressed="${th===v}">${l}</button>`).join('')}</div>
+      <span class="hint">Auto follows your phone or computer’s setting.</span></div>
     <div class="field" style="max-width:320px"><label for="wifeNameIn">Who you transfer house money to</label><input id="wifeNameIn" value="${esc(S.wifeName)}"></div>
     <div class="small muted">Payday is the Thursday before the last Friday of the month. In December it’s the Thursday before the last Friday before Christmas Day. Each new pay month starts with last month’s salary and transfer, so you only change what’s different.</div>
   </section>
   <section class="card">
-    <div><h2>Backup</h2><div class="small muted">Save all your figures to a file, or load them back from one. Use this to move to the phone app version, or keep a copy just in case.</div></div>
+    <div><h2>Backup</h2><div class="small muted">Save all your figures to a file, or load them back from one. Handy to keep a copy just in case.</div></div>
     <div class="row"><button class="btn primary" data-act="export">Save a backup</button>
       <label class="btn" for="importFile" style="cursor:pointer">Restore from backup</label><input type="file" id="importFile" accept=".json,application/json" hidden></div>
     <div id="backupMsg" class="small" role="status"></div>
   </section>
-  ${mode==='cloud'?`<section class="card"><div class="row spread"><div><h2>Account</h2><div class="small muted">Signed in as ${esc(userEmail)}</div></div><button class="btn" data-act="sign-out">Sign out</button></div></section>`:''}`;
+  ${mode==='cloud'?`<section class="card"><div class="row spread"><div><h2>Account</h2><div class="small muted">Signed in as ${esc(userEmail)}</div></div><button class="btn danger" data-act="sign-out">Log out</button></div></section>`:''}`;
 }
 function renderOwed(){
   const list=S.debts.map(d=>({d,left:debtLeft(d)}));
@@ -884,7 +907,8 @@ document.addEventListener('click',e=>{
   switch(act){
   case 'goto': tab=b.dataset.tab; render(); return;
   case 'sign-out': signOut(); return;
-  case 'goto-backup': tab='bills'; render(); setTimeout(()=>{const el=$('#importFile');if(el)el.closest('.card').scrollIntoView({behavior:'smooth'})},50); return;
+  case 'theme':{const v=b.dataset.v;try{localStorage.setItem('pp-theme',v)}catch(_){}applyTheme(v);render();return}
+  case 'goto-backup': tab='settings'; render(); setTimeout(()=>{const el=$('#importFile');if(el)el.closest('.card').scrollIntoView({behavior:'smooth'})},50); return;
   case 'import-no': pendingImport=null; backupMsg(''); return;
   case 'import-yes': if(!pendingImport)return; S=normalise(pendingImport); S.example=false; pendingImport=null; save(); render(); backupMsg('Backup restored.'); return;
   case 'export':{

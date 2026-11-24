@@ -28,6 +28,8 @@ Personal money planner for one user (UK, £). Live at https://calum-gilchrist.gi
 
 ## User's preferences
 - Plain UK English, £, no jargon. Keep the home screen short.
+- Settings (gear icon, top right): Auto/Light/Dark appearance (per device, `pp-theme`, default Auto), who the house money goes to, backup/restore, log out.
+- Salary-split bar colours must stay clearly different hues (raspberry, blue, cyan, orange, green). The balance box stays subtle (no accent fill).
 - Home screen ("This month"):
   - The salary split comes first.
   - Then the Bills account summary.
