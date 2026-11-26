@@ -60,7 +60,9 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 #panel{display:flex;flex-direction:column;gap:16px}
 
 /* header */
-.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:nowrap}
+.top .brand{flex:1;min-width:0}
+.topwrap{display:flex;flex-direction:column;gap:2px}
 .brand{font-family:var(--f-display);font-weight:700;font-size:1.05rem;display:flex;align-items:center;gap:8px}
 .brand i{width:22px;height:22px;border-radius:6px;background:var(--accent);display:inline-block;position:relative}
 .brand i::after{content:"£";position:absolute;inset:0;display:grid;place-items:center;color:var(--accent-ink);font-style:normal;font-size:.8rem}
@@ -191,10 +193,12 @@ td.r,th.r{text-align:right}
 <body>
 
 <div class="wrap">
+  <div class="topwrap">
   <div class="top">
     <div class="brand"><i aria-hidden="true"></i>Payday Planner</div>
-    <div class="row" style="gap:10px;flex-wrap:nowrap;min-width:0"><div class="status" id="status">Loading your figures…</div>
-    <button class="iconbtn gear" id="settingsBtn" data-act="goto" data-tab="settings" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button></div>
+    <button class="iconbtn gear" id="settingsBtn" data-act="goto" data-tab="settings" aria-label="Settings"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  </div>
+  <div class="status" id="status">Loading your figures…</div>
   </div>
   <div class="monthbar">
     <div>
@@ -322,7 +326,7 @@ function monthRec(k){
   const r=S.months[k]; if(r) return r;
   const prev=Object.keys(S.months).filter(x=>x<k).sort().at(-1);
   const p=prev?S.months[prev]:null;
-  return{salary:p?p.salary:S.salaryDefault,wife:p?p.wife:S.wifeDefault,wifeSent:false,moved:false,paid:{},over:{},ticks:{},times:{},early:{},oneOffs:[],adj:[],startBal:0,balance:null,car:null,carDone:false,_virtual:true};
+  return{salary:p?p.salary:S.salaryDefault,wife:p?p.wife:S.wifeDefault,wifeSent:false,moved:false,paid:{},over:{},ticks:{},times:{},early:{},pend:{},oneOffs:[],adj:[],startBal:0,balance:null,car:null,carDone:false,_virtual:true};
 }
 function ensure(k){const r=monthRec(k); if(r._virtual){delete r._virtual;S.months[k]=r} return r}
 const kindLabel=d=>d.kind==='Credit card'&&d.card?'Credit card · '+d.card:(d.kind||'Owed');
@@ -338,7 +342,8 @@ function carryIn(b,k){
   let t=0; for(let m=b.carryFrom;m<k;m=addM(m,1)){const r=monthRec(m);t+=setAsideFor(b,r)-spentFor(b,r)}
   return r2(t);
 }
-function paidTotal(id,beforeK){let t=0;for(const[k,r]of Object.entries(S.months)){if(beforeK&&k>=beforeK)continue;const v=r.paid&&r.paid[id];if(typeof v==='number')t+=v}return r2(t)}
+function paidTotal(id,beforeK){let t=0;for(const[k,r]of Object.entries(S.months)){if(beforeK&&k>=beforeK)continue;const v=r.paid&&r.paid[id];if(typeof v==='number')t+=v;const q=r.pend&&r.pend[id];if(typeof q==='number')t+=q}return r2(t)}
+function pendingFor(id){return sum(Object.values(S.months),r=>r.pend&&typeof r.pend[id]==='number'?r.pend[id]:0)}
 function debtLeft(d,beforeK){return Math.max(0,r2(d.balance-paidTotal(d.id,beforeK)))}
 function paymentsDone(d,beforeK){return d.style==='split'&&d.monthly?Math.min(d.count,Math.round((d.total-debtLeft(d,beforeK))/d.monthly)):0}
 function nextUnpaidK(d){
@@ -359,11 +364,11 @@ function entriesFor(k){
   });
   S.debts.forEach(d=>{
     if(d.from&&d.from>k) return;
-    const before=debtLeft(d,k), ph=r.paid[d.id]; if(before<=0.004&&ph==null) return;
+    const before=debtLeft(d,k), ph=r.paid[d.id], pd=r.pend[d.id]; if(before<=0.004&&ph==null&&pd==null) return;
     const flex=d.style==='flex';
     out.push({id:d.id,name:d.name,note:d.note,kind:kindLabel(d),type:'debt',flex,times:1,early:r.early[d.id]||null,
       payNo:d.style==='split'?paymentsDone(d,k)+1:null,payOf:d.count||null,
-      amount:ph??r.over[d.id]??Math.min(+d.monthly||0,before),spent:ph??0,left:before,done:ph!=null,
+      amount:ph??pd??r.over[d.id]??Math.min(+d.monthly||0,before),spent:ph??0,left:before,done:ph!=null,pending:ph==null&&pd!=null,
       date:flex?null:itemDate(k,+d.day||1)});
   });
   (r.oneOffs||[]).forEach(o=>out.push({id:o.id,name:o.name,note:o.note,kind:'One-off',type:'oneoff',times:1,amount:+o.amount||0,
@@ -441,7 +446,7 @@ function normalise(s){
   s.goals=s.goals||[];
   s.bills.forEach(x=>{x.times=+x.times||1});
   s.debts.forEach(x=>{x.style=x.style||'fixed'});
-  for(const r of Object.values(s.months)){r.paid=r.paid||{};r.over=r.over||{};r.ticks=r.ticks||{};r.times=r.times||{};r.early=r.early||{};r.oneOffs=r.oneOffs||[];r.adj=r.adj||[]}
+  for(const r of Object.values(s.months)){r.paid=r.paid||{};r.over=r.over||{};r.ticks=r.ticks||{};r.times=r.times||{};r.early=r.early||{};r.pend=r.pend||{};r.oneOffs=r.oneOffs||[];r.adj=r.adj||[]}
   return s;
 }
 function startSync(user){
@@ -621,7 +626,7 @@ function itemRow(i){
   const multi=i.times>1, n=multi?i.ticks.filter(Boolean).length:0;
   const check=multi
     ?`<button class="check ${i.done?'on':(n?'part':'')}" data-act="tick-next" data-id="${i.id}" aria-label="Tick the next ${esc(i.name)}">${i.done?'✓':(n?n:'')}</button>`
-    :`<button class="check ${i.done?'on':''}" data-act="${i.done?'untick':(i.carry||i.flex?'pay-sheet':'tick')}" data-id="${i.id}" aria-pressed="${i.done}" aria-label="Mark ${esc(i.name)} as gone out">✓</button>`;
+    :`<button class="check ${i.done?'on':''}" data-act="${i.done?'untick':i.pending?'tick':(i.carry||i.flex?'pay-sheet':'tick')}" data-id="${i.id}" aria-pressed="${i.done}" aria-label="Mark ${esc(i.name)} as gone out">✓</button>`;
   const meta=[`<span class="chip">${esc(i.kind)}</span>`];
   if(multi) meta.push(`<span class="small muted">${n} of ${i.times} · ${fmt(i.amount/i.times)} each</span>`);
   if(i.payNo) meta.push(`<span class="small muted">Payment ${Math.min(i.payNo,i.payOf)} of ${i.payOf}</span>`);
@@ -631,12 +636,12 @@ function itemRow(i){
     const avail=r2(i.carried+i.amount);
     meta.push(`<span class="small muted">${fmt(avail)} available${i.carried?` (incl. ${fmt(i.carried)} carried)`:''}${i.spent?` · spent ${fmt(i.spent)}`:''}</span>`);
   }
-  const chip=dueChip(i); if(chip) meta.push(chip);
+  const chip=i.pending?'<span class="chip warn">Pending – waiting to leave your account</span>':dueChip(i); if(chip) meta.push(chip);
   if(monthRec(curK).over[i.id]!=null&&!i.flex) meta.push('<span class="chip">Changed this month</span>');
   const boxes=multi?`<div class="boxes">${i.ticks.map((on,ix)=>`<button class="mini ${on?'on':''}" data-act="tick-n" data-id="${i.id}" data-n="${ix}" aria-pressed="${on}" aria-label="${esc(i.name)} ${ix+1}">${on?'✓':ix+1}</button>`).join('')}</div>`:'';
   const amt=(i.flex&&!i.done&&!i.amount)?'<span class="muted">Any</span>':fmt(i.done&&(i.carry||i.flex)?i.spent:i.amount);
   return`<div class="item ${i.done?'done':''}">${check}${dayPill(i.date)}
-    <div class="mid"><button class="nmwrap" data-act="edit-month-item" data-id="${i.id}" data-type="${i.type}"><span class="nm">${esc(i.name)}</span>${noteHtml(i.note)}<span class="meta">${meta.join('')}</span></button>${boxes}</div>
+    <div class="mid"><button class="nmwrap" data-act="edit-month-item" data-id="${i.id}" data-type="${i.type}"><span class="nm">${esc(i.name)}</span>${noteHtml(i.note)}<span class="meta">${meta.join('')}</span></button>${boxes}${i.type==='debt'&&!i.done&&!i.early?`<div><button class="btn ghost sm" style="padding-left:0" data-act="${i.pending?'unpend':'pend'}" data-id="${i.id}">${i.pending?'Not pending':'Mark as pending'}</button></div>`:''}</div>
     <span class="num amt">${amt}</span></div>`;
 }
 function renderMonth(){
@@ -682,8 +687,9 @@ function renderBills(){
   const tot=sum(S.bills,b=>b.amount*(b.times||1));
   const bills=S.bills;
   $('#panel').innerHTML=`<section class="card">
-    <div class="row spread"><div><h2>Regular bills</h2><div class="small muted">Everything that comes off your account each pay month. <span class="num">${fmt(tot)}</span> in total.</div></div>
+    <div class="row spread"><div><h2>Regular bills</h2><div class="small muted">Everything that comes off your account each pay month.</div></div>
     <button class="btn primary" data-act="add-bill">+ Add bill</button></div>
+    <div class="kpis"><div class="kpi"><small>Monthly total</small><span class="num">${fmt(tot)}</span></div><div class="kpi"><small>Number of bills</small><span class="num">${S.bills.length}</span></div></div>
     ${bills.length>1?'<div class="row"><span class="small muted">Use the arrows to change the order. Your home screen uses the same order.</span><button class="btn ghost" data-act="sort-bills">Sort by day</button></div>':''}
     ${bills.length?`<div class="list">${bills.map((b,ix)=>`<div class="item" style="grid-template-columns:44px minmax(0,1fr) auto auto">
       ${(b.times||1)>1||b.noDate?'<span class="day"><b>–</b>any</span>':`<span class="day"><b>${+b.day||1}</b>day</span>`}
@@ -732,6 +738,9 @@ function renderOwed(){
       <div style="text-align:right"><div class="num" style="font-weight:600">${left>0.004?fmt(left):'Paid off'}</div><div class="small muted">${left>0.004?(n?(n===1?'Last payment':n+' payments left')+(lastK?' · last one '+itemDate(lastK,+d.day||1).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}):''):`${fmt(paid)} paid so far`):'of '+fmt(base)}</div></div></div>
       ${split?`<div class="boxes" aria-label="${done} of ${d.count} payments made">${Array.from({length:d.count},(_,ix)=>`<span class="mini ${ix<done?'on':''}">${ix<done?'✓':ix+1}</span>`).join('')}</div>`:`<div class="progress"><div style="width:${pct.toFixed(1)}%"></div></div>`}
       ${early.length?`<div class="meta">${early.map(k=>`<span class="chip good">${payName(k)} payment paid early</span>`).join('')}</div>`:''}
+      ${pendingFor(d.id)>0.004?`<div class="meta"><span class="chip warn">${fmt(pendingFor(d.id))} pending – not left your account yet</span></div>`:''}
+      ${left<=0.004?(confirmRemove===d.id?`<div class="confirm"><span>Remove ${esc(d.name)} for good?</span><span class="row"><button class="btn sm" data-act="remove-no">Keep</button><button class="btn sm danger" data-act="remove-yes" data-id="${d.id}">Remove</button></span></div>`
+        :`<div class="row">${Object.values(S.months).some(r=>(r.paid&&r.paid[d.id]!=null)||(r.pend&&r.pend[d.id]!=null))?`<button class="btn sm" data-act="undo-paid" data-id="${d.id}">↶ Undo last payment</button>`:''}<button class="btn sm danger" data-act="remove-debt" data-id="${d.id}">Remove</button></div>`):''}
       ${left>0.004?`<div class="row">${flex?`<button class="btn sm" data-act="add-payment" data-id="${d.id}">+ Record a payment</button>`:(nk?`<button class="btn sm" data-act="pay-early" data-id="${d.id}">✓ Paid next one early</button>`:'')}</div>`:''}</div>`};
   const goals=S.goals.map(g=>{const saved=goalSaved(g),pct=g.target?Math.min(100,saved/g.target*100):0,rem=g.target?Math.max(0,g.target-saved):0;
     return`<div class="debt"><div class="dhead">
@@ -879,7 +888,7 @@ const goalFields=[
   {key:'note',label:'Notes',type:'text',ph:'Anything to remember'}];
 
 /* ---------- actions ---------- */
-let pendingImport=null;
+let pendingImport=null, confirmRemove=null;
 function backupMsg(html){const el=$('#backupMsg');if(el)el.innerHTML=html}
 function moneyVal(v){const n=parseFloat(String(v).replace(/[£,\s]/g,''));return isNaN(n)?0:r2(n)}
 document.addEventListener('change',e=>{
@@ -921,8 +930,18 @@ document.addEventListener('click',e=>{
   case 'tog-wife':{const r=ensure(curK);r.wifeSent=!r.wifeSent;break}
   case 'tog-moved':{const r=ensure(curK);r.moved=!r.moved;break}
   case 'tog-car':{const r=ensure(curK);if(!r.carDone)r.car=carAmountFor(curK);r.carDone=!r.carDone;break}
-  case 'tick':{const it=item();if(!it)return;ensure(curK).paid[id]=r2(it.amount);break}
-  case 'untick':{const r=ensure(curK);delete r.paid[id];delete r.early[id];break}
+  case 'tick':{const it=item();if(!it)return;const r=ensure(curK);r.paid[id]=r2(it.amount);delete r.pend[id];break}
+  case 'untick':{const r=ensure(curK);delete r.paid[id];delete r.early[id];delete r.pend[id];break}
+  case 'unpend':{delete ensure(curK).pend[id];break}
+  case 'pend':{const it=item();if(!it)return;
+    if(it.flex||!it.amount){sheet({title:'Pending – '+it.name,note:'You’ve told them to take it but it hasn’t left your account yet. The money stays counted in the bills account until you tick it.',
+      fields:[{key:'amount',label:'Amount (£)',type:'money'}],values:{amount:it.amount||''},onSave:v=>{ensure(curK).pend[id]=v.amount}});return}
+    ensure(curK).pend[id]=r2(it.amount);break}
+  case 'undo-paid':{let last=null;for(const[k,r]of Object.entries(S.months)){if((r.paid&&r.paid[id]!=null)||(r.pend&&r.pend[id]!=null)){if(!last||k>last)last=k}}
+    if(!last)return;const r=S.months[last];delete r.paid[id];if(r.pend)delete r.pend[id];if(r.early)delete r.early[id];break}
+  case 'remove-debt':{confirmRemove=id;render();return}
+  case 'remove-no':{confirmRemove=null;render();return}
+  case 'remove-yes':{S.debts=S.debts.filter(x=>x.id!==id);confirmRemove=null;break}
   case 'tick-n':{const it=item();if(!it)return;const r=ensure(curK);const t=(r.ticks[id]||[]).slice(0,it.times);while(t.length<it.times)t.push(false);const n=+b.dataset.n;t[n]=!t[n];r.ticks[id]=t;break}
   case 'tick-next':{const it=item();if(!it)return;const r=ensure(curK);const t=it.ticks.slice();const nx=t.indexOf(false);if(nx<0)t.fill(false);else t[nx]=true;r.ticks[id]=t;break}
   case 'pay-sheet':{const it=item();if(!it)return;

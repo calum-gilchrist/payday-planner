@@ -1,6 +1,6 @@
 // Payday Planner service worker: keeps the app working offline.
 // Bump VERSION whenever the app files change so phones pick up the update.
-const VERSION = 'pp-v2';
+const VERSION = 'pp-v3';
 const APP = ['./', 'index.html', 'manifest.webmanifest',
   'vendor/firebase-app-compat.js', 'vendor/firebase-auth-compat.js', 'vendor/firebase-firestore-compat.js',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-192.png', 'icons/maskable-512.png',

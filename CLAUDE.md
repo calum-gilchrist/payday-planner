@@ -16,7 +16,7 @@ Personal money planner for one user (UK, £). Live at https://calum-gilchrist.gi
   - `months` is keyed by **pay month** `YYYY-MM` and holds per-month ticks, overrides, one-offs, adjustments and balance.
 - `normalise()` fills in defaults for older data. Never rename or remove fields without migrating them there, or the user's saved figures break.
 - Firestore rules (also in README): only `request.auth.uid == uid` can read or write `users/{uid}/**`.
-- Backup/Restore (Bills tab) uses JSON `{app:'payday-planner', version:1, savedAt, state}`.
+- Backup/Restore (Settings) uses JSON `{app:'payday-planner', version:1, savedAt, state}`.
 
 ## Rules the app depends on
 - **Payday** is the Thursday before the last Friday of the month. In December it's the Thursday before the last Friday *before* 25 Dec. See `payday(k)`.
@@ -28,6 +28,7 @@ Personal money planner for one user (UK, £). Live at https://calum-gilchrist.gi
 
 ## User's preferences
 - Plain UK English, £, no jargon. Keep the home screen short.
+- Header: brand left, gear icon always top right on the same line; the sync status sits on its own line underneath.
 - Settings (gear icon, top right): Auto/Light/Dark appearance (per device, `pp-theme`, default Auto), who the house money goes to, backup/restore, log out.
 - Salary-split bar colours must stay clearly different hues (raspberry, blue, cyan, orange, green). The balance box stays subtle (no accent fill).
 - Home screen ("This month"):
@@ -45,7 +46,7 @@ Personal money planner for one user (UK, £). Live at https://calum-gilchrist.gi
   - a fixed monthly amount;
   - pay what I can (credit cards, with an optional card name).
 
-  Each can be marked "paid next one early".
+  Each can be marked "paid next one early", or a payment marked **pending** (`months[k].pend[id]`): it counts off the debt balance but stays in the bills account and in "Owed to come off" until ticked as gone out. Paid-off debts have **Undo last payment** and **Remove**.
 - Savings goals have a target, where the money is kept and notes. You add money any time.
 - Car mileage shows miles over, the total owed and the amount put aside. Money is added any time; it is not spread over the rest of the lease.
 
