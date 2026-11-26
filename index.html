@@ -1005,8 +1005,8 @@ document.addEventListener('click',e=>{
     sheet({title:'Money in or out',fields:[{key:'label',label:'What it is',type:'text',ph:'e.g. Sold old phone'},{key:'dir',label:'Money in or out',type:'select',options:[{v:'in',l:'Money in (adds to what you have)'},{v:'out',l:'Money out (takes away)'}]},{key:'amount',label:'Amount (£)',type:'money'}],values:{label:a.label,dir:a.amount<0?'out':'in',amount:Math.abs(a.amount)},
     onSave:v=>Object.assign(a,{label:v.label,amount:v.dir==='out'?-v.amount:v.amount}),onDelete:()=>{r.adj=r.adj.filter(x=>x.id!==id)}});return}
   case 'set-balance':{const r=monthRec(curK);
-    sheet({title:'Main account balance',note:'What your banking app says right now. Use a minus sign if you’re overdrawn. Anything you haven’t ticked as moved out yet (house transfer, bills account, savings, car) is taken off to work out what’s left to spend.',
-    fields:[{key:'amount',label:'Balance (£)',type:'signed'},{key:'date',label:'Date',type:'date'}],values:{amount:r.balance?r.balance.amount:'',date:isoToday()},
+    sheet({title:'Main account balance',note:(r.balance?'Last balance '+fmt(r.balance.amount)+' on '+nice(r.balance.date)+'. ':'')+'What your banking app says right now. Use a minus sign if you’re overdrawn. Anything you haven’t ticked as moved out yet (house transfer, bills account, savings, car) is taken off to work out what’s left to spend.',
+    fields:[{key:'amount',label:'Balance (£)',type:'signed'},{key:'date',label:'Date',type:'date'}],values:{amount:'',date:isoToday()},
     onSave:v=>{ensure(curK).balance={amount:v.amount,date:v.date}},onClear:r.balance?()=>{ensure(curK).balance=null}:null,clearLabel:'Remove balance'});return}
   case 'add-bill': sheet({title:'Add a bill',fields:billFields,values:{day:1,times:1,carry:'no',when:'day'},
       onSave:v=>S.bills.push({id:newId(),name:v.name,note:v.note,amount:v.amount,day:v.day||1,noDate:v.when==='any',times:Math.max(1,Math.round(v.times||1)),carry:v.carry==='yes',carryFrom:v.carry==='yes'?curK:null})}); return;
