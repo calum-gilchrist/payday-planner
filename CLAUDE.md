@@ -28,18 +28,19 @@ Personal money planner for one user (UK, £). Live at https://calum-gilchrist.gi
 
 ## User's preferences
 - Plain UK English, £, no jargon. Keep the home screen short.
+- Bills tab starts with the Bills account card (to cover, gone out, should be in account). Settings page shows no pay split.
+- Manifest/meta theme colour matches the page background so Android's nav bar doesn't show a blue strip.
 - Header: brand left, gear icon always top right on the same line; the sync status sits on its own line underneath.
 - Settings (gear icon, top right): Auto/Light/Dark appearance (per device, `pp-theme`, default Auto), who the house money goes to, backup/restore, log out.
 - Salary-split bar colours must stay clearly different hues (raspberry, blue, cyan, orange, green). The balance box stays subtle (no accent fill).
 - Home screen ("This month"):
   - The salary split comes first. It can be hidden per pay month (`pp-split-hidden` in localStorage, new months open expanded); the balance box (Left to spend, Spent so far, Next pay countdown like "3w 4d", Update balance) always stays visible. No per-day figure.
-  - Then the Bills account summary.
   - Then the unticked **Bills to come off** in the user's own order (set with arrows on the Bills tab), then unticked **Owed to come off**, then Savings.
   - Ticked items move to a collapsible **Came off** section at the bottom.
 - Bills can be:
   - a set day;
   - no set date (single tick);
-  - several times a month (numbered tick boxes, no dates);
+  - several times a month (numbered tick boxes, no dates; "+ 1 extra" adds one just for that pay month via `months[k].times[id]`);
   - "carry unspent money over" budgets.
 - Owed can be:
   - split into N payments (Klarna pay in 3, 12 months, etc.);

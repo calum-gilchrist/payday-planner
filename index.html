@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Payday Planner</title>
-<meta name="theme-color" content="#2343C4">
+<meta name="theme-color" content="#EEF1F6">
 <meta name="description" content="Split each pay between the house transfer, bills account, savings and car money, and tick bills off as they go.">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
@@ -121,7 +121,10 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .balbox>div:first-child b{display:block}
 .balbox>.btn{align-self:flex-start}
 .balbox .kpi{background:var(--surface)}
-.balgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.balgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.balgrid .kpi{padding:8px 10px;min-width:0}
+.balgrid .kpi small{font-size:.62rem;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.balgrid .kpi .num{font-size:1rem!important}
 
 /* tabs */
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;overflow-x:auto}
@@ -361,7 +364,7 @@ function entriesFor(k){
     const n=timesFor(b,r), day=+b.day||1;
     const ticks=n>1?Array.from({length:n},(_,i)=>!!(r.ticks[b.id]||[])[i]):null;
     out.push({id:b.id,name:b.name,note:b.note,kind:'Bill',type:'bill',amount:setAsideFor(b,r),spent:spentFor(b,r),carried:carryIn(b,k),
-      carry:!!b.carry,times:n,ticks,done:n>1?ticks.every(Boolean):r.paid[b.id]!=null,date:(n>1||(+b.times||1)>1||b.noDate)?null:itemDate(k,day)});
+      carry:!!b.carry,times:n,usual:+b.times||1,ticks,done:n>1?ticks.every(Boolean):r.paid[b.id]!=null,date:(n>1||(+b.times||1)>1||b.noDate)?null:itemDate(k,day)});
   });
   S.debts.forEach(d=>{
     if(d.from&&d.from>k) return;
@@ -546,10 +549,11 @@ function render(){
   const P=payday(curK), N=payday(addM(curK,1)), isNow=curK===currentPayK();
   $('#monthTitle').textContent=payName(curK)+' '+P.getFullYear();
   const days=Math.round((N-today0())/864e5);
-  $('#payLine').innerHTML=`Paid <b>${dshort(P)}</b> · lasts until next pay on <b>${dshort(N)}</b>${isNow?` · <span class="num">${countdown(today0(),N)}</span> to go`:''}`;
+  $('#payLine').innerHTML=`Paid <b>${dshort(P)}</b> · Next pay <b>${dshort(N)}</b>${isNow?` · <span class="num">${countdown(today0(),N)}</span> to go`:''}`;
   if(!S){$('#split').innerHTML='<div class="muted">Loading your figures…</div>';$('#panel').innerHTML='';return}
   const fresh=!S.example&&!S.bills.length&&!S.debts.length&&!S.goals.length&&!Object.keys(S.months).length;
   $('#banner').innerHTML=fresh?`<div class="banner"><div><b>Welcome.</b> Moving from the Claude version? Restore the backup file you saved there and all your figures come across.</div><div class="row"><button class="btn primary" data-act="goto-backup">Restore from backup</button></div></div>`:S.example?`<div class="banner"><div><b>Example figures.</b> These are made-up numbers to show how it works. Edit them, or clear them and add your own.</div><div class="row"><button class="btn" data-act="keep-example">Hide note</button><button class="btn primary" data-act="clear-example">Start with my own</button></div></div>`:'';
+  $('#split').hidden=tab==='settings'; $('#banner').hidden=tab==='settings';
   renderSplit();
   document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
   const g=$('#settingsBtn'); if(g){if(tab==='settings')g.setAttribute('aria-current','page');else g.removeAttribute('aria-current')}
@@ -563,7 +567,7 @@ function renderSplit(){
   const hidden=splitHidden(curK);
   const steps=[[t.wife,r.wifeSent],[t.bills,r.moved],[t.savings,savedAll],[t.car,r.carDone]].filter(x=>x[0]>0);
   const doneN=steps.filter(x=>x[1]).length;
-  const head=`<button class="splithead" data-act="toggle-split" aria-expanded="${!hidden}"><span><b>Pay split</b>${hidden?`<span class="small muted"> · ${fmt(income)} in · Left for you <b class="num ${t.left<0?'neg':''}">${fmt(t.left)}</b>${steps.length?` · ${doneN} of ${steps.length} moved`:''}</span>`:''}</span><span class="small" style="color:var(--accent);font-weight:600;white-space:nowrap">${hidden?'Show ▼':'Hide ▲'}</span></button>`;
+  const head=`<button class="splithead" data-act="toggle-split" aria-expanded="${!hidden}"><span><b>Pay split</b></span><span class="small" style="color:var(--accent);font-weight:600;white-space:nowrap">${hidden?'Show ▼':'Hide ▲'}</span></button>`;
   if(hidden){$('#split').innerHTML=head+balanceBlock(t);return}
   $('#split').innerHTML=head+`
   <div class="split-hero">
@@ -571,7 +575,7 @@ function renderSplit(){
     <div><span class="moneyin big"><span>£</span><input id="salaryIn" inputmode="decimal" value="${t.salary||''}" placeholder="0.00"></span></div>
   </div>
   <div class="extras">
-    <div class="xrow"><label for="startIn">Already in main account before pay</label><span class="moneyin"><span>£</span><input id="startIn" inputmode="decimal" value="${t.start||''}" placeholder="0.00"></span></div>
+    <div class="xrow"><label for="startIn">Balance before pay</label><span class="moneyin"><span>£</span><input id="startIn" inputmode="decimal" value="${t.start||''}" placeholder="0.00"></span></div>
     ${(r.adj||[]).map(a=>`<button class="xrow xbtn" data-act="edit-adj" data-id="${a.id}"><span>${esc(a.label||(a.amount<0?'Money out':'Money in'))}</span><span class="num ${a.amount<0?'neg':''}">${a.amount<0?'−':'+'}${fmt(Math.abs(a.amount))}</span></button>`).join('')}
     <div class="xrow"><button class="btn ghost" data-act="add-adj" style="padding-left:0">+ Money in or out</button>${t.start||t.adj?`<span class="small muted">Total to work with <b class="num">${fmt(income)}</b></span>`:''}</div>
   </div>
@@ -616,8 +620,8 @@ function balanceBlock(t){
   const leftNow=r2(b.amount-t.pending), spent=r2(t.left-leftNow);
   return `<div class="balbox">
     <div class="balgrid">
-      <div class="kpi"><small>Left to spend</small><span class="num ${leftNow<0?'neg':''}" style="font-size:1.3rem">${fmt(leftNow)}</span></div>
-      <div class="kpi"><small>Spent so far</small><span class="num">${fmt(Math.max(0,spent))}</span></div>
+      <div class="kpi"><small>Available</small><span class="num ${leftNow<0?'neg':''}" style="font-size:1.3rem">${fmt(leftNow)}</span></div>
+      <div class="kpi"><small>Spent</small><span class="num">${fmt(Math.max(0,spent))}</span></div>
       <div class="kpi"><small>${isNow?'Next pay in':'Next pay'}</small><span class="num">${nextTxt}</span></div>
     </div>
     <div class="row spread"><span class="small muted">Balance ${fmt(b.amount)} on ${nice(b.date)}${t.pending>0.004?` · ${fmt(t.pending)} of it still to move out`:''}</span><button class="btn sm" data-act="set-balance">Update balance</button></div>
@@ -652,7 +656,8 @@ function itemRow(i){
   }
   const chip=i.pending?'<span class="chip warn">Pending – waiting to leave your account</span>':dueChip(i); if(chip) meta.push(chip);
   if(monthRec(curK).over[i.id]!=null&&!i.flex) meta.push('<span class="chip">Changed this month</span>');
-  const boxes=multi?`<div class="boxes">${i.ticks.map((on,ix)=>`<button class="mini ${on?'on':''}" data-act="tick-n" data-id="${i.id}" data-n="${ix}" aria-pressed="${on}" aria-label="${esc(i.name)} ${ix+1}">${on?'✓':ix+1}</button>`).join('')}</div>`:'';
+  const boxes=multi?`<div class="boxes">${i.ticks.map((on,ix)=>`<button class="mini ${on?'on':''}" data-act="tick-n" data-id="${i.id}" data-n="${ix}" aria-pressed="${on}" aria-label="${esc(i.name)} ${ix+1}">${on?'✓':ix+1}</button>`).join('')}</div>
+    <div class="row" style="gap:4px"><button class="btn ghost sm" style="padding-left:0" data-act="extra-add" data-id="${i.id}">+ 1 extra</button>${i.times>i.usual?`<button class="btn ghost sm" data-act="extra-remove" data-id="${i.id}">− Remove extra</button><span class="small muted">${i.times-i.usual} extra this month</span>`:''}</div>`:'';
   const amt=(i.flex&&!i.done&&!i.amount)?'<span class="muted">Any</span>':fmt(i.done&&(i.carry||i.flex)?i.spent:i.amount);
   return`<div class="item ${i.done?'done':''}">${check}${dayPill(i.date)}
     <div class="mid"><button class="nmwrap" data-act="edit-month-item" data-id="${i.id}" data-type="${i.type}"><span class="nm">${esc(i.name)}</span>${noteHtml(i.note)}<span class="meta">${meta.join('')}</span></button>${boxes}${i.type==='debt'&&!i.done&&!i.early?`<div><button class="btn ghost sm" style="padding-left:0" data-act="${i.pending?'unpend':'pend'}" data-id="${i.id}">${i.pending?'Not pending':'Mark as pending'}</button></div>`:''}</div>
@@ -673,17 +678,7 @@ function renderMonth(){
   const toGo=a=>a.filter(i=>!i.done), gone=t.items.filter(i=>i.done);
   const billsTo=toGo(bills), owedTo=toGo(owed);
   let open=false; try{open=localStorage.getItem('pp-cameoff')==='1'}catch(e){}
-  $('#panel').innerHTML=`<section class="card">
-    <div><h2>Bills account</h2><div class="small muted">Bills and what you owe both come out of here.</div></div>
-    <div class="kpis">
-      <div class="kpi"><small>To cover this pay</small><span class="num">${fmt(t.bills+t.carried)}</span></div>
-      <div class="kpi"><small>Gone out</small><span class="num">${fmt(t.spent)}</span></div>
-      <div class="kpi"><small>Should be in account</small><span class="num">${fmt(t.inAccount)}</span></div>
-      ${r.moved?`<div class="kpi"><small>${afterUp<-0.004?'Short after the rest':'Spare after the rest'}</small><span class="num ${afterUp<-0.004?'neg':''}">${fmt(afterUp)}</span></div>`:''}
-    </div>
-    <div class="progress" aria-label="${pct}% gone out"><div style="width:${Math.min(100,pct)}%"></div></div>
-    ${t.carried||t.carryOut?`<div class="note">${t.carried?`${fmt(t.carried)} carried over from last pay is already in the bills account. `:''}${t.carryOut>0?`${fmt(t.carryOut)} unspent will carry on to next pay.`:''}</div>`:''}
-  </section>
+  $('#panel').innerHTML=`
   <section class="card">
     ${head('Bills to come off',bills.length?`${billsTo.length} of ${bills.length} still to go. In your order – change it on the Bills tab.`:'',billsTo.length?fmt(sum(billsTo,i=>i.amount)):'','<button class="btn sm" data-act="add-oneoff">+ One-off</button>')}
     ${billsTo.length?`<div class="list">${billsTo.map(itemRow).join('')}</div>`:bills.length?'<div class="small muted">All bills have come off for this pay.</div>':`<div class="empty">No bills yet.<button class="btn primary" data-act="goto" data-tab="bills">Add your bills</button></div>`}
@@ -697,10 +692,25 @@ function renderMonth(){
     <div class="list">${gone.map(itemRow).join('')}</div></details>`:''}`;
   const d=$('#cameOff'); if(d) d.addEventListener('toggle',()=>{try{localStorage.setItem('pp-cameoff',d.open?'1':'0')}catch(e){};const m=d.querySelector('summary .small');if(m)m.textContent=m.textContent.replace(/tap to (show|hide)/,'tap to '+(d.open?'hide':'show'))});
 }
+function billsAccountCard(){
+  const t=totals(curK), r=t.r, pct=t.bills+t.carried?Math.round(t.spent/(t.bills+t.carried)*100):0;
+  const up=upcoming(t), afterUp=r2(t.inAccount-up.total);
+  return `<section class="card">
+    <div><h2>Bills account</h2><div class="small muted">Bills and what you owe both come out of here.</div></div>
+    <div class="kpis">
+      <div class="kpi"><small>To cover this pay</small><span class="num">${fmt(t.bills+t.carried)}</span></div>
+      <div class="kpi"><small>Gone out</small><span class="num">${fmt(t.spent)}</span></div>
+      <div class="kpi"><small>Should be in account</small><span class="num">${fmt(t.inAccount)}</span></div>
+      ${r.moved?`<div class="kpi"><small>${afterUp<-0.004?'Short after the rest':'Spare after the rest'}</small><span class="num ${afterUp<-0.004?'neg':''}">${fmt(afterUp)}</span></div>`:''}
+    </div>
+    <div class="progress" aria-label="${pct}% gone out"><div style="width:${Math.min(100,pct)}%"></div></div>
+    ${t.carried||t.carryOut?`<div class="note">${t.carried?`${fmt(t.carried)} carried over from last pay is already in the bills account. `:''}${t.carryOut>0?`${fmt(t.carryOut)} unspent will carry on to next pay.`:''}</div>`:''}
+  </section>`;
+}
 function renderBills(){
   const tot=sum(S.bills,b=>b.amount*(b.times||1));
   const bills=S.bills;
-  $('#panel').innerHTML=`<section class="card">
+  $('#panel').innerHTML=billsAccountCard()+`<section class="card">
     <div class="row spread"><div><h2>Regular bills</h2><div class="small muted">Everything that comes off your account each pay month.</div></div>
     <button class="btn primary" data-act="add-bill">+ Add bill</button></div>
     <div class="kpis"><div class="kpi"><small>Monthly total</small><span class="num">${fmt(tot)}</span></div><div class="kpi"><small>Number of bills</small><span class="num">${S.bills.length}</span></div></div>
@@ -930,6 +940,9 @@ document.addEventListener('click',e=>{
   switch(act){
   case 'goto': tab=b.dataset.tab; render(); return;
   case 'sign-out': signOut(); return;
+  case 'extra-add':{const it=item();if(!it)return;const r=ensure(curK);r.times[id]=it.times+1;break}
+  case 'extra-remove':{const it=item();if(!it||it.times<=it.usual)return;const r=ensure(curK);const n=it.times-1;
+    if(n===it.usual)delete r.times[id];else r.times[id]=n;if(r.ticks[id])r.ticks[id]=r.ticks[id].slice(0,n);break}
   case 'toggle-split': setSplitHidden(curK,!splitHidden(curK)); renderSplit(); return;
   case 'theme':{const v=b.dataset.v;try{localStorage.setItem('pp-theme',v)}catch(_){}applyTheme(v);render();return}
   case 'goto-backup': tab='settings'; render(); setTimeout(()=>{const el=$('#importFile');if(el)el.closest('.card').scrollIntoView({behavior:'smooth'})},50); return;
