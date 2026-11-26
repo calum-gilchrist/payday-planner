@@ -662,7 +662,7 @@ function renderMonth(){
     <button class="check ${x.done?'on':''}" data-act="${x.done?'untick':'save-sheet'}" data-id="${x.id}" aria-label="Mark ${esc(x.name)} savings as moved">✓</button>
     <span class="day"><b>£</b>save</span>
     <button class="nmwrap" data-act="edit-goal-month" data-id="${x.id}"><span class="nm">${esc(x.name)}</span>${noteHtml(x.g.note)}
-      <span class="meta">${x.g.where?`<span class="chip save">Kept in ${esc(x.g.where)}</span>`:''}<span class="small muted">${fmt(x.before)}${x.g.target?' of '+fmt(x.g.target):''} saved</span></span></button>
+      <span class="meta">${x.g.where?`<span class="chip save">Kept in ${esc(x.g.where)}</span>`:''}${(()=>{const tot=r2(x.before+(x.done?x.amount:0)),rem=x.g.target?Math.max(0,r2(x.g.target-tot)):0;return`<span class="small muted">${fmt(tot)}${x.g.target?' of '+fmt(x.g.target):''} saved${x.g.target?(rem>0.004?` · ${fmt(rem)} to go`:' · target reached'):''}</span>`})()}</span></button>
     <span class="num amt">${!x.done&&!x.amount?'<span class="muted">Any</span>':fmt(x.amount)}</span></div>`).join('');
   const head=(title,sub,total,extra='')=>`<div class="row spread"><div><h2>${title}</h2><div class="small muted">${sub}</div></div><div class="row">${total?`<span class="num" style="font-weight:600">${total}</span>`:''}${extra}</div></div>`;
   const up=upcoming(t), afterUp=r2(t.inAccount-up.total);
