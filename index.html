@@ -123,12 +123,12 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid 
 .balbox .kpi{background:var(--surface)}
 .balgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .balgrid .kpi{padding:8px 10px;min-width:0}
-.balgrid .kpi small{font-size:.62rem;letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.balgrid .kpi .num{font-size:1rem!important}
+.balgrid .kpi small{font-size:.62rem;letter-spacing:.04em;line-height:1.25;min-height:2.5em}
+.balgrid .kpi .num{font-size:clamp(.88rem,4vw,1.05rem)!important}
 
 /* tabs */
 .tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;overflow-x:auto}
-.tabs button{flex:1;border:0;background:transparent;border-radius:9px;padding:9px 8px;font-size:.88rem;font-weight:600;color:var(--muted);white-space:nowrap}
+.tabs button{flex:1 1 auto;border:0;background:transparent;border-radius:9px;padding:9px 6px;font-size:.86rem;font-weight:600;color:var(--muted);white-space:nowrap}
 .tabs button[aria-selected="true"]{background:var(--accent-soft);color:var(--accent)}
 
 /* list */
@@ -219,9 +219,10 @@ td.r,th.r{text-align:right}
   <section class="card" id="split"></section>
   <nav class="tabs" role="tablist" id="tabs">
     <button role="tab" data-tab="month">This month</button>
+    <button role="tab" data-tab="split">Pay split</button>
     <button role="tab" data-tab="bills">Bills</button>
-    <button role="tab" data-tab="owed">Owed &amp; saving</button>
-    <button role="tab" data-tab="car">Car mileage</button>
+    <button role="tab" data-tab="owed">Owed</button>
+    <button role="tab" data-tab="car">Car</button>
   </nav>
   <div id="panel"></div>
 </div>
@@ -543,8 +544,6 @@ function countdown(from,to){
   const d=Math.round((b-a)/864e5); if(d<=0) return 'Today';
   const w=Math.floor(d/7), r=d%7; return (w?w+'w':'')+(w&&r?' ':'')+(r?r+'d':'');
 }
-function splitHidden(k){try{return (JSON.parse(localStorage.getItem('pp-split-hidden')||'[]')).includes(k)}catch(e){return false}}
-function setSplitHidden(k,on){try{let a=JSON.parse(localStorage.getItem('pp-split-hidden')||'[]');a=a.filter(x=>x!==k);if(on)a.push(k);localStorage.setItem('pp-split-hidden',JSON.stringify(a.slice(-24)))}catch(e){}}
 function render(){
   const P=payday(curK), N=payday(addM(curK,1)), isNow=curK===currentPayK();
   $('#monthTitle').textContent=payName(curK)+' '+P.getFullYear();
@@ -554,22 +553,18 @@ function render(){
   const fresh=!S.example&&!S.bills.length&&!S.debts.length&&!S.goals.length&&!Object.keys(S.months).length;
   $('#banner').innerHTML=fresh?`<div class="banner"><div><b>Welcome.</b> Moving from the Claude version? Restore the backup file you saved there and all your figures come across.</div><div class="row"><button class="btn primary" data-act="goto-backup">Restore from backup</button></div></div>`:S.example?`<div class="banner"><div><b>Example figures.</b> These are made-up numbers to show how it works. Edit them, or clear them and add your own.</div><div class="row"><button class="btn" data-act="keep-example">Hide note</button><button class="btn primary" data-act="clear-example">Start with my own</button></div></div>`:'';
   $('#split').hidden=tab==='settings'; $('#banner').hidden=tab==='settings';
-  renderSplit();
+  renderOverview();
   document.querySelectorAll('#tabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===tab));
   const g=$('#settingsBtn'); if(g){if(tab==='settings')g.setAttribute('aria-current','page');else g.removeAttribute('aria-current')}
-  ({month:renderMonth,bills:renderBills,owed:renderOwed,car:renderCar,settings:renderSettings}[tab]||renderMonth)();
+  ({month:renderMonth,split:renderPaySplit,bills:renderBills,owed:renderOwed,car:renderCar,settings:renderSettings}[tab]||renderMonth)();
 }
 function tickBtn(on,act,label,labelOn){return`<button class="tick ${on?'on':''}" data-act="${act}" aria-pressed="${on}"><span class="box">${on?'✓':''}</span>${on?labelOn:label}</button>`}
-function renderSplit(){
+function renderPaySplit(){
   const t=totals(curK), r=t.r, income=r2(t.start+t.adj+t.salary), base=Math.max(income,t.wife+t.bills+t.savings+t.car,1);
   const seg=(v,c)=>v>0?`<div style="width:${(v/base*100).toFixed(2)}%;background:var(${c})"></div>`:'';
   const st=carStats(), savedAll=t.goals.length&&t.goals.every(g=>g.done);
-  const hidden=splitHidden(curK);
-  const steps=[[t.wife,r.wifeSent],[t.bills,r.moved],[t.savings,savedAll],[t.car,r.carDone]].filter(x=>x[0]>0);
-  const doneN=steps.filter(x=>x[1]).length;
-  const head=`<button class="splithead" data-act="toggle-split" aria-expanded="${!hidden}"><span><b>Pay split</b></span><span class="small" style="color:var(--accent);font-weight:600;white-space:nowrap">${hidden?'Show ▼':'Hide ▲'}</span></button>`;
-  if(hidden){$('#split').innerHTML=head+balanceBlock(t);return}
-  $('#split').innerHTML=head+`
+  $('#panel').innerHTML=`<section class="card">
+  <h2>Pay split</h2>
   <div class="split-hero">
     <label class="small muted" for="salaryIn">Salary paid in on ${dshort(payday(curK))}</label>
     <div><span class="moneyin big"><span>£</span><input id="salaryIn" inputmode="decimal" value="${t.salary||''}" placeholder="0.00"></span></div>
@@ -602,8 +597,9 @@ function renderSplit(){
       <span class="num ${t.left<0?'neg':''}" style="font-size:1.1rem;font-weight:600">${fmt(t.left)}</span><span></span></div>
   </div>
   ${S.debts.length?`<button class="owedline" data-act="goto" data-tab="owed"><span>Total you owe <span class="small muted">· not taken off Left for you</span></span><span class="num">${fmt(owedTotal())}</span></button>`:''}
-  ${balanceBlock(t)}`;
+  </section>`;
 }
+function renderOverview(){$('#split').innerHTML='<h2>Overview</h2>'+balanceBlock(totals(curK))}
 function upcoming(t){
   const rem=i=>i.carry?Math.max(0,r2(i.carried+i.amount-i.spent)):i.times>1?Math.max(0,r2(i.amount-i.spent)):(+i.amount||0);
   const list=t.items.filter(i=>!i.done&&!i.early).map(i=>({...i,rem:rem(i)})).filter(i=>i.rem>0.004);
@@ -613,19 +609,14 @@ function upcoming(t){
 }
 function owedTotal(){return sum(S.debts,d=>debtLeft(d))}
 function balanceBlock(t){
-  const r=t.r, b=r.balance, next=payday(addM(curK,1));
-  const isNow=curK===currentPayK();
-  const nextTxt=isNow?countdown(today0(),next):dshort(next);
-  if(!b) return `<div class="balbox"><div><b>Check your spending</b><div class="small muted">Enter your main account balance any time to see what’s really left.${isNow?` Next pay in <b class="num">${nextTxt}</b>.`:''}</div></div><button class="btn sm" data-act="set-balance">Update balance</button></div>`;
-  const leftNow=r2(b.amount-t.pending), spent=r2(t.left-leftNow);
-  return `<div class="balbox">
-    <div class="balgrid">
-      <div class="kpi"><small>Available</small><span class="num ${leftNow<0?'neg':''}" style="font-size:1.3rem">${fmt(leftNow)}</span></div>
-      <div class="kpi"><small>Spent</small><span class="num">${fmt(Math.max(0,spent))}</span></div>
-      <div class="kpi"><small>${isNow?'Next pay in':'Next pay'}</small><span class="num">${nextTxt}</span></div>
+  const r=t.r, b=r.balance;
+  const leftNow=b?r2(b.amount-t.pending):null, spent=b?r2(t.left-leftNow):null;
+  return `<div class="balgrid">
+      <div class="kpi"><small>Available</small><span class="num ${leftNow<0?'neg':''}">${b?fmt(leftNow):'—'}</span></div>
+      <div class="kpi"><small>Spent</small><span class="num">${b?fmt(Math.max(0,spent)):'—'}</span></div>
+      <div class="kpi"><small>Bills remaining</small><span class="num ${t.inAccount<-0.004?'neg':''}">${fmt(t.inAccount)}</span></div>
     </div>
-    <div class="row spread"><span class="small muted">Balance ${fmt(b.amount)} on ${nice(b.date)}${t.pending>0.004?` · ${fmt(t.pending)} of it still to move out`:''}</span><button class="btn sm" data-act="set-balance">Update balance</button></div>
-  </div>`;
+    <div class="row spread"><span class="small muted">${b?`Balance ${fmt(b.amount)} on ${nice(b.date)}${t.pending>0.004?` · ${fmt(t.pending)} of it still to move out`:''}`:'Enter your main account balance to see what’s left to spend.'}</span><button class="btn sm" data-act="set-balance">Update balance</button></div>`;
 }
 function dueChip(i){
   if(i.times>1) return '';
@@ -943,7 +934,6 @@ document.addEventListener('click',e=>{
   case 'extra-add':{const it=item();if(!it)return;const r=ensure(curK);r.times[id]=it.times+1;break}
   case 'extra-remove':{const it=item();if(!it||it.times<=it.usual)return;const r=ensure(curK);const n=it.times-1;
     if(n===it.usual)delete r.times[id];else r.times[id]=n;if(r.ticks[id])r.ticks[id]=r.ticks[id].slice(0,n);break}
-  case 'toggle-split': setSplitHidden(curK,!splitHidden(curK)); renderSplit(); return;
   case 'theme':{const v=b.dataset.v;try{localStorage.setItem('pp-theme',v)}catch(_){}applyTheme(v);render();return}
   case 'goto-backup': tab='settings'; render(); setTimeout(()=>{const el=$('#importFile');if(el)el.closest('.card').scrollIntoView({behavior:'smooth'})},50); return;
   case 'import-no': pendingImport=null; backupMsg(''); return;

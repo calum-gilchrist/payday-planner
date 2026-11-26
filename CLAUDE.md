@@ -34,7 +34,8 @@ Personal money planner for one user (UK, £). Live at https://calum-gilchrist.gi
 - Settings (gear icon, top right): Auto/Light/Dark appearance (per device, `pp-theme`, default Auto), who the house money goes to, backup/restore, log out.
 - Salary-split bar colours must stay clearly different hues (raspberry, blue, cyan, orange, green). The balance box stays subtle (no accent fill).
 - Home screen ("This month"):
-  - The salary split comes first. It can be hidden per pay month (`pp-split-hidden` in localStorage, new months open expanded); the balance box (Left to spend, Spent so far, Next pay countdown like "3w 4d", Update balance) always stays visible. No per-day figure.
+  - An **Overview** card sits at the top of every tab except Settings: Available, Spent (both from the entered balance) and Bills remaining (= should be in bills account), plus Update balance. The next-pay countdown ("3w 4d") is in the line under the month title.
+  - Tabs: This month · Pay split · Bills · Owed · Car. The salary/transfer/car split lives on the **Pay split** tab.
   - Then the unticked **Bills to come off** in the user's own order (set with arrows on the Bills tab), then unticked **Owed to come off**, then Savings.
   - Ticked items move to a collapsible **Came off** section at the bottom.
 - Bills can be:
